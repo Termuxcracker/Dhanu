@@ -3,179 +3,243 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dhanu — Eternal Constellation ✨</title>
+<title>Dhanu — Galaxy of Gold ✨</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
   :root{
-    --pink:#ff61b6; --violet:#8b5cf6; --ink:#050007; --glass: rgba(255,255,255,0.04);
+    --gold-1:#ffd700;
+    --gold-2:#ffefb0;
+    --white:#ffffff;
+    --ink:#08050a;
+    --glass: rgba(255,255,255,0.06);
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:linear-gradient(160deg,#06000b,#200033 40%, #3b004f 100%);font-family:Poppins,system-ui,Arial;color:#fff;overflow:hidden}
-  /* layout */
-  .wrap{position:relative;min-height:100vh;display:grid;place-items:center;padding:28px}
-  .aurora{position:absolute;inset:-30%;z-index:0;pointer-events:none;filter:blur(36px) saturate(1.2);mix-blend-mode:screen}
-  .aurora .band{position:absolute;left:0;right:0;height:44%;border-radius:50%;opacity:0.14}
-  .band.a{top:-12%;background:radial-gradient(circle at 20% 30%, rgba(255,90,160,0.95), transparent 30%);transform:rotate(-12deg)}
-  .band.b{bottom:-14%;height:52%;background:radial-gradient(circle at 80% 30%, rgba(180,140,255,0.95), transparent 35%);transform:rotate(8deg)}
-  .card{position:relative;z-index:12;width:min(1080px,96%);max-width:1080px;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(8px);border:1px solid rgba(255,255,255,0.04);box-shadow:0 40px 110px rgba(0,0,0,0.6)}
+  html,body{height:100%;margin:0;background:linear-gradient(160deg,var(--ink),#120812 45%, #2b0b12 100%);font-family:Poppins,system-ui,Arial;color:var(--white);overflow:hidden}
+  .wrap{position:relative;min-height:100vh;display:grid;place-items:center;padding:28px;perspective:1000px}
+  .aurora{position:absolute;inset:-25%;z-index:0;pointer-events:none;filter:blur(36px) saturate(1.1);mix-blend-mode:screen;transition:transform .15s linear}
+  .aurora .band{position:absolute;left:0;right:0;height:40%;border-radius:50%;opacity:0.12}
+  .band.a{top:-14%;background:radial-gradient(circle at 20% 20%, rgba(246,211,101,0.95), transparent 30%);transform:rotate(-10deg)}
+  .band.b{bottom:-14%;background:radial-gradient(circle at 80% 40%, rgba(250,226,176,0.9), transparent 35%);transform:rotate(8deg)}
+  .vignette{position:fixed;inset:0;box-shadow:inset 0 120px 220px rgba(0,0,0,0.6);pointer-events:none;z-index:200}
+
+  .card-wrap { transform-style:preserve-3d; transition:transform .12s ease-out; will-change:transform; }
+  .card{position:relative;z-index:30;width:min(1040px,96%);max-width:1040px;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 90px rgba(0,0,0,0.6);transform:translateZ(0); will-change:transform}
   .row{display:flex;gap:26px;align-items:center}
-  @media (max-width:860px){.row{flex-direction:column-reverse;padding:8px}}
-  /* portrait */
-  .portrait{width:260px;height:260px;border-radius:50%;flex:0 0 260px;padding:8px;background:linear-gradient(135deg,var(--pink),var(--violet));display:grid;place-items:center;transition:transform .28s ease}
-  .portrait img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:6px solid rgba(255,255,255,0.04);box-shadow:0 18px 60px rgba(139,79,255,0.14);display:block;transform-origin:center}
-  /* text */
-  h1{font-family:'Great Vibes',cursive;font-size:54px;margin:0;color:var(--pink);text-shadow:0 22px 60px rgba(139,79,255,0.12)}
-  .sub{margin-top:8px;color:#ffdff6;font-size:15px}
+  @media (max-width:840px){.row{flex-direction:column-reverse;padding:8px}}
+
+  /* portrait area */
+  .portrait {
+    position:relative;
+    width:260px;
+    height:260px;
+    border-radius:50%;
+    flex:0 0 260px;
+    padding:8px;
+    background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
+    display:grid;
+    place-items:center;
+    transition:transform .28s ease, box-shadow .28s ease;
+    overflow:hidden;
+    /* CSS variables for follow highlight */
+    --hx: 50%;
+    --hy: 40%;
+    --hsz: 0.6; /* highlight size multiplier */
+  }
+
+  /* moving soft shimmer (sweep) */
+  .portrait::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.85) 50%, transparent 60%);
+    transform:translateX(-120%) rotate(25deg);
+    animation:shimmer 4.4s linear infinite;
+    pointer-events:none;
+    mix-blend-mode:screen;
+    opacity:0.9;
+  }
+  @keyframes shimmer{0%{transform:translateX(-120%) rotate(25deg)}60%{transform:translateX(140%) rotate(25deg)}100%{transform:translateX(140%) rotate(25deg)}}
+
+  /* highlight that follows pointer (smooth, soft radial) */
+  .portrait::before{
+    content:"";
+    position:absolute;
+    left:0; top:0;
+    width:100%; height:100%;
+    border-radius:50%;
+    pointer-events:none;
+    /* radial gradient uses CSS vars controlled by JS */
+    background:
+      radial-gradient(
+        circle at var(--hx) var(--hy),
+        rgba(255,248,220,0.95) calc(12% * var(--hsz)),
+        rgba(255,238,160,0.55) calc(16% * var(--hsz)),
+        rgba(255,224,120,0.12) calc(35% * var(--hsz)),
+        transparent 45%
+      );
+    mix-blend-mode:screen;
+    transition:opacity .12s linear;
+    opacity:0.95;
+    filter:blur(8px);
+    transform:translateZ(10px);
+  }
+
+  .portrait img{
+    width:100%; height:100%; border-radius:50%; object-fit:cover;
+    border:6px solid rgba(255,255,255,0.06); box-shadow:0 18px 60px rgba(245,196,107,0.12); display:block; transform-origin:center;
+    transition:transform .18s linear;
+  }
+
+  /* text & controls */
+  h1{font-family:'Great Vibes',cursive;font-size:48px;margin:0;color:var(--gold-1);text-shadow:0 18px 36px rgba(245,196,107,0.12)}
+  .sub{margin-top:8px;color:rgba(255,245,238,0.95);font-size:15px}
   .typewrap{margin-top:16px;height:56px;display:flex;align-items:center;gap:12px}
   .typed{font-weight:700;font-size:20px;color:#fff}
-  .caret{width:3px;height:30px;background:linear-gradient(180deg,var(--pink),var(--violet));animation:blink 1s steps(2,end) infinite}
+  .caret{width:3px;height:30px;background:linear-gradient(180deg,var(--gold-1),var(--gold-2));animation:blink 1s steps(2,end) infinite}
   @keyframes blink{50%{opacity:0}}
-  .promise{margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-size:15px;color:#ffdff6;display:inline-block;animation:pulse 2.4s infinite alternate}
-  @keyframes pulse{0%{transform:scale(1);opacity:.9}50%{transform:scale(1.03);opacity:1}100%{transform:scale(1);opacity:.9}}
+  .promise{margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-size:15px;color:#fff;display:inline-block;animation:softPulse 2.6s infinite alternate}
+  @keyframes softPulse{0%{transform:scale(1);opacity:.95}50%{transform:scale(1.02);opacity:1}100%{transform:scale(1);opacity:.95}}
+
   .controls{display:flex;gap:12px;margin-top:18px;align-items:center;flex-wrap:wrap}
   .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:700;cursor:pointer}
-  .play{background:linear-gradient(90deg,var(--pink),var(--violet));color:#150014;box-shadow:0 18px 48px rgba(138,75,255,0.12)}
-  .surp{background:transparent;color:#ffd3f7;border:1px solid rgba(255,255,255,0.06)}
-  .note{margin-top:12px;font-size:13px;color:rgba(255,255,255,0.65)}
-  /* canvases */
-  canvas#particles, canvas#trail, canvas#constell{position:absolute;inset:0;z-index:6;pointer-events:none}
-  /* petals */
-  .petal{position:absolute;pointer-events:none;z-index:10;font-size:28px;transform-origin:center}
-  /* modal */
-  .modal{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at center, rgba(10,5,15,0.6), rgba(0,0,0,0.86));z-index:140;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
+  .surp{background:linear-gradient(90deg,var(--white),#fff2d6);color:#2a0a00;border:1px solid rgba(0,0,0,0.06);box-shadow:0 14px 36px rgba(0,0,0,0.12)}
+  .note{margin-top:12px;font-size:13px;color:rgba(255,245,230,0.75)}
+
+  canvas#particles, canvas#trail, canvas#constell, canvas#confetti {position:absolute;inset:0;z-index:6;pointer-events:none}
+
+  .petal{position:absolute;pointer-events:none;z-index:22;font-size:28px;transform-origin:center}
+
+  .modal{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at center, rgba(8,6,10,0.6), rgba(0,0,0,0.85));z-index:240;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
   .modal.open{opacity:1;pointer-events:auto}
-  .modal-card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));padding:26px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);max-width:720px;color:#fff}
-  .modal h2{margin:0 0 8px;font-size:30px;color:var(--pink);font-family:'Great Vibes',cursive}
-  /* small screens */
+  .modal-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:26px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);max-width:720px;color:#1a0b00}
+  .modal h2{margin:0 0 8px;font-size:28px;color:var(--gold-2);font-family:'Great Vibes',cursive}
+  .modal p{color:#2b1608;line-height:1.6;min-height:3em}
   @media (max-width:520px){h1{font-size:38px}.portrait{width:180px;height:180px;flex:0 0 180px}}
 </style>
 </head>
 <body>
-  <div class="aurora" aria-hidden="true">
-    <div class="band a"></div>
-    <div class="band b"></div>
-  </div>
+  <div class="aurora" aria-hidden="true"><div class="band a"></div><div class="band b"></div></div>
+  <div class="vignette" aria-hidden="true"></div>
 
-  <div class="wrap" id="wrap">
-    <div class="card" role="main" aria-label="Love page for Dhanu">
-      <div class="row">
-        <div class="portrait" id="portrait">
-          <img id="dhanuImg" src="dhanu.png" alt="Dhanu" onerror="this.src='https://placehold.co/480x480/3a0033/fff?text=Dhanu'">
-        </div>
-
-        <div class="content">
-          <h1>For Dhanu</h1>
-          <div class="sub">a cinematic little universe made for you</div>
-
-          <div class="typewrap" aria-hidden="true">
-            <div class="typed" id="typed">my favorite hello</div>
-            <div class="caret" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="card-wrap" id="cardWrap">
+      <div class="card" role="main" aria-label="Love page for Dhanu">
+        <div class="row">
+          <div class="portrait" id="portrait">
+            <img id="dhanuImg" src="dhanu.png" alt="Dhanu" onerror="this.src='https://placehold.co/480x480/f6d365/3a1b00?text=Dhanu'">
           </div>
 
-          <div class="promise" id="promise">I promise to hold you through loud days and quiet ones.</div>
+          <div class="content">
+            <h1>For Dhanu</h1>
+            <div class="sub">a gold & white galaxy, made just for you</div>
 
-          <div class="controls">
-            <button class="btn play" id="playBtn" aria-pressed="false">🎶 Play a song that reminds me of you</button>
-            <button class="btn surp" id="surpriseBtn">✨ Surprise</button>
-            <div style="flex:1"></div>
+            <div class="typewrap" aria-hidden="true">
+              <div class="typed" id="typed">my favorite hello</div>
+              <div class="caret" aria-hidden="true"></div>
+            </div>
+
+            <div class="promise" id="promise">I promise to hold you through the soft and loud days alike.</div>
+
+            <div class="controls">
+              <button class="btn surp" id="surpriseBtn">✨ Reveal My Heart</button>
+              <div style="flex:1"></div>
+            </div>
+
+            <div class="note">Tip: Click / tap anywhere to sprinkle stardust & hearts. Hover near the portrait for constellations.</div>
           </div>
-
-          <div class="note">Tip: Click / tap anywhere to sprinkle stardust & petals. Upload <code>dhanu.png</code> to the same folder before publishing.</div>
         </div>
       </div>
     </div>
 
-    <canvas id="particles" aria-hidden="true"></canvas>
-    <canvas id="trail" aria-hidden="true"></canvas>
-    <canvas id="constell" aria-hidden="true"></canvas>
+    <canvas id="particles"></canvas>
+    <canvas id="trail"></canvas>
+    <canvas id="constell"></canvas>
+    <canvas id="confetti"></canvas>
+  </div>
 
-    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-      <div class="modal-card">
-        <h2 id="modal-title">My Dearest Dhanu,</h2>
-        <p>Every glowing dot and falling petal is a tiny memory with you. Thank you for being my guiding star—today, tomorrow, always.</p>
-        <div style="margin-top:18px;display:flex;gap:12px;justify-content:flex-end">
-          <button class="btn surp" id="closeModal">Close</button>
-        </div>
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card">
+      <h2 id="modal-title">My Dearest Dhanu,</h2>
+      <p id="modalText"></p>
+      <div style="margin-top:18px;display:flex;gap:12px;justify-content:flex-end">
+        <button class="btn surp" id="closeModal">Close</button>
       </div>
     </div>
   </div>
-
-  <!-- Put your Google Drive direct download link here (we converted it earlier) -->
-  <script>const AUDIO_SRC = "https://docs.google.com/uc?export=download&id=13BZcaKAdvWP1-QSUhG-q05N6bpolyXkD";</script>
-  <audio id="bgAudio" src="" preload="none"></audio>
 
 <script>
-/* ----------------- Helpers ----------------- */
+/* ========================= Utilities ========================= */
 const rand = (a,b)=>Math.random()*(b-a)+a;
 
-/* ------------- Audio analyser setup ---------- */
-const audio = document.getElementById('bgAudio');
-audio.src = AUDIO_SRC;
-let audioCtx, analyser, dataArray, sourceNode;
-async function setupAudioAnalyser(){
-  try{
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    const bufferLength = analyser.frequencyBinCount;
-    dataArray = new Uint8Array(bufferLength);
-    sourceNode = audioCtx.createMediaElementSource(audio);
-    sourceNode.connect(analyser);
-    analyser.connect(audioCtx.destination);
-  }catch(e){ console.warn('audio analyser not available', e); }
-}
-setupAudioAnalyser();
+/* ========================= Parallax tilt ========================= */
+const cardWrap = document.getElementById('cardWrap');
+const aurora = document.querySelector('.aurora');
+let ww = innerWidth, wh = innerHeight;
+window.addEventListener('resize', ()=>{ ww = innerWidth; wh = innerHeight; });
 
-/* ---------------- Particles (background) -------------- */
+window.addEventListener('pointermove', (e)=>{
+  const nx = (e.clientX/ww) - 0.5;
+  const ny = (e.clientY/wh) - 0.5;
+  const rotX = (-ny) * 6;
+  const rotY = nx * 8;
+  cardWrap.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
+  aurora.style.transform = `translateX(${nx*8}px) translateY(${ny*6}px)`;
+});
+window.addEventListener('pointerleave', ()=>{ cardWrap.style.transform = ''; aurora.style.transform = ''; });
+
+/* ========================= Particles (gold stars) ========================= */
 const pCanvas = document.getElementById('particles');
 const pCtx = pCanvas.getContext('2d');
 let W = pCanvas.width = innerWidth, H = pCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ W = pCanvas.width = innerWidth; H = pCanvas.height = innerHeight; spawnEdge(); computeConstPoints(); });
+window.addEventListener('resize', ()=>{ W = pCanvas.width = innerWidth; H = pCanvas.height = innerHeight; spawnEdge(); computeConstPoints(); drawConstell(); });
 
-class P {
+class Star {
   constructor(){ this.reset(); }
-  reset(){ this.x = rand(0,W); this.y = rand(0,H); this.r = rand(0.6,3.4); this.vx = rand(-0.12,0.12); this.vy = rand(-0.22,-0.03); this.h = rand(270,320); this.a = rand(0.06,0.9); }
-  update(){ this.x += this.vx; this.y += this.vy; if(this.y < -10){ this.y = H+10; this.x = rand(0,W) } if(this.x < -10) this.x = W+10; if(this.x>W+10) this.x = -10; }
-  draw(){ pCtx.beginPath(); pCtx.fillStyle = `hsla(${this.h},90%,70%,${this.a})`; pCtx.arc(this.x,this.y,this.r,0,Math.PI*2); pCtx.fill(); }
+  reset(){ this.x = rand(0,W); this.y = rand(0,H); this.r = rand(0.6,3.6); this.vx = rand(-0.12,0.12); this.vy = rand(-0.22,-0.03); this.h = rand(40,50); this.a = rand(0.08,0.9); }
+  update(){ this.x += this.vx; this.y += this.vy; if(this.y < -10){ this.y = H+10; this.x = rand(0,W) } }
+  draw(){ pCtx.beginPath(); pCtx.fillStyle = `hsla(${this.h},90%,60%,${this.a})`; pCtx.arc(this.x,this.y,this.r,0,Math.PI*2); pCtx.fill(); }
 }
-const particles = [];
-for(let i=0;i<240;i++) particles.push(new P());
-function drawParticles(){ pCtx.clearRect(0,0,W,H); for(let p of particles){ p.update(); p.draw(); } requestAnimationFrame(drawParticles); }
-drawParticles();
+const stars = [];
+for(let i=0;i<220;i++) stars.push(new Star());
+function spawnEdge(){ for(let i=0;i<6;i++) stars.push(new Star()); }
+function drawStars(){ pCtx.clearRect(0,0,W,H); for(let s of stars){ s.update(); s.draw(); } requestAnimationFrame(drawStars); }
+drawStars();
 
-/* ---------------- Trail (mouse) -------------- */
+/* ========================= Cursor trail (soft sparkles) ========================= */
 const tCanvas = document.getElementById('trail');
 const tCtx = tCanvas.getContext('2d');
 tCanvas.width = innerWidth; tCanvas.height = innerHeight;
 window.addEventListener('resize', ()=>{ tCanvas.width = innerWidth; tCanvas.height = innerHeight; });
 
-const trailDots = [];
-class Trail {
-  constructor(x,y,h){ this.x=x; this.y=y; this.vx=rand(-0.8,0.8); this.vy=rand(-1.8,-0.4); this.r=rand(0.6,2.6); this.h=h; this.life=rand(40,110); }
-  update(){ this.x += this.vx; this.y += this.vy; this.life--; this.r *= 0.997; }
-  draw(){ tCtx.beginPath(); tCtx.fillStyle = `hsla(${this.h},90%,70%,${Math.max(0,this.life/110)})`; tCtx.arc(this.x,this.y,this.r,0,Math.PI*2); tCtx.fill(); }
+const trail = [];
+class Dot {
+  constructor(x,y,h){ this.x=x; this.y=y; this.vx=rand(-0.8,0.8); this.vy=rand(-1.6,-0.4); this.r=rand(0.6,2.6); this.h=h; this.life=rand(40,100); }
+  update(){ this.x += this.vx; this.y += this.vy; this.life--; this.r *= 0.995; }
+  draw(){ tCtx.beginPath(); tCtx.fillStyle = `hsla(${this.h},85%,60%,${Math.max(0,this.life/100)})`; tCtx.arc(this.x,this.y,this.r,0,Math.PI*2); tCtx.fill(); }
 }
-function drawTrail(){ tCtx.clearRect(0,0,tCanvas.width,tCanvas.height); for(let i=trailDots.length-1;i>=0;i--){ const d=trailDots[i]; d.update(); d.draw(); if(d.life<=0) trailDots.splice(i,1); } requestAnimationFrame(drawTrail); }
+function drawTrail(){ tCtx.clearRect(0,0,tCanvas.width,tCanvas.height); for(let i=trail.length-1;i>=0;i--){ const d=trail[i]; d.update(); d.draw(); if(d.life<=0) trail.splice(i,1); } requestAnimationFrame(drawTrail); }
 drawTrail();
-window.addEventListener('pointermove',(e)=>{ for(let i=0;i<2;i++) trailDots.push(new Trail(e.clientX+rand(-6,6), e.clientY+rand(-6,6), rand(280,320))); });
+window.addEventListener('pointermove',(e)=>{ for(let i=0;i<2;i++) trail.push(new Dot(e.clientX+rand(-6,6), e.clientY+rand(-6,6), rand(40,48))); });
 
-/* ---------------- Falling petals/hearts ------------- */
+/* ========================= Falling hearts/petals ========================= */
 function makePetal(x,y){
   const el = document.createElement('div');
   el.className = 'petal';
-  el.innerText = Math.random()>0.5? '🌸':'💗';
+  el.innerText = Math.random()>0.5? '🌼' : '❤';
   el.style.left = (x + rand(-60,60)) + 'px';
   el.style.top = (y - 10) + 'px';
-  el.style.opacity = rand(0.6,1);
-  el.style.fontSize = (rand(18,36)) + 'px';
+  el.style.opacity = rand(0.65,1);
+  el.style.fontSize = (rand(20,40)) + 'px';
+  el.style.color = rand(0,1) > 0.5 ? '#fff9e6' : '#ffd89b';
   document.body.appendChild(el);
 
-  const dur = rand(3000,8000);
+  const dur = rand(3000,9000);
   const start = performance.now();
   const startX = parseFloat(el.style.left);
   const startY = parseFloat(el.style.top);
-  const endX = startX + rand(-160,160);
-  const endY = H + 90;
+  const endX = startX + rand(-200,200);
+  const endY = H + 120;
 
   function tick(t){
     const p = (t - start) / dur;
@@ -184,29 +248,25 @@ function makePetal(x,y){
     const ny = startY + (endY-startY)*p + Math.sin(p*6)*40;
     el.style.left = nx + 'px';
     el.style.top = ny + 'px';
-    el.style.transform = `rotate(${p*720}deg) scale(${1 - p*0.25})`;
+    el.style.transform = `rotate(${p*720}deg) scale(${1 - p*0.2})`;
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
 }
-
-/* spawn on click */
 window.addEventListener('pointerdown', (e)=>{
   spawnAt(e.clientX,e.clientY,12);
-  for(let i=0;i<4;i++) makePetal(e.clientX + rand(-20,20), e.clientY + rand(-10,10));
+  for(let i=0;i<5;i++) makePetal(e.clientX + rand(-20,20), e.clientY + rand(-10,10));
 });
-
-/* spawn helper */
 function spawnAt(x,y,n=6){
   for(let i=0;i<n;i++){
-    const p = new P();
-    p.x = x + rand(-12,12); p.y = y + rand(-12,12); p.vx = rand(-1,1); p.vy = rand(-2,-0.2);
-    particles.push(p);
+    const s = new Star();
+    s.x = x + rand(-12,12); s.y = y + rand(-12,12); s.vx = rand(-1,1); s.vy = rand(-2,-0.2);
+    stars.push(s);
   }
 }
 setInterval(()=>spawnAt(rand(40,W-40), rand(40,H-40), 3), 900);
 
-/* --------------- Constellation lines -------------- */
+/* ========================= Constellation lines near portrait ========================= */
 const cCanvas = document.getElementById('constell');
 const cCtx = cCanvas.getContext('2d');
 cCanvas.width = innerWidth; cCanvas.height = innerHeight;
@@ -219,11 +279,11 @@ function computeConstPoints(){
   const cx = rect.left + rect.width/2;
   const cy = rect.top + rect.height/2;
   constPoints = [];
-  const count = 10;
+  const count = 12;
   for(let i=0;i<count;i++){
     const angle = (Math.PI*2)*(i/count) + rand(-0.4,0.4);
-    const dist = rect.width*0.9 + rand(-40,120);
-    constPoints.push({x: cx + Math.cos(angle)*dist + rand(-30,30), y: cy + Math.sin(angle)*dist + rand(-30,30), a: rand(0.3,1)});
+    const dist = rect.width*0.9 + rand(-40,160);
+    constPoints.push({x: cx + Math.cos(angle)*dist + rand(-40,40), y: cy + Math.sin(angle)*dist + rand(-40,40), a: rand(0.3,1)});
   }
 }
 computeConstPoints();
@@ -239,14 +299,14 @@ function drawConstell(){
       const cx = r.left + r.width/2, cy = r.top + r.height/2;
       cCtx.beginPath();
       cCtx.moveTo(p.x, p.y);
-      const mx = (p.x + cx)/2 + rand(-40,40);
-      const my = (p.y + cy)/2 + rand(-30,30);
+      const mx = (p.x + cx)/2 + rand(-30,30);
+      const my = (p.y + cy)/2 + rand(-20,20);
       cCtx.quadraticCurveTo(mx, my, cx, cy);
-      cCtx.strokeStyle = `rgba(255,210,255,${0.06 + 0.12*p.a})`;
-      cCtx.lineWidth = 1.2;
+      cCtx.strokeStyle = `rgba(255,230,190,${0.06 + 0.12*p.a})`;
+      cCtx.lineWidth = 1.1;
       cCtx.stroke();
       cCtx.beginPath();
-      cCtx.fillStyle = `rgba(255,180,240,${0.7*p.a})`;
+      cCtx.fillStyle = `rgba(255,230,170,${0.7*p.a})`;
       cCtx.arc(p.x, p.y, 2 + p.a*2, 0, Math.PI*2); cCtx.fill();
     }
   }
@@ -254,86 +314,150 @@ function drawConstell(){
 }
 drawConstell();
 
-/* --------------- Typewriter phrases -------------- */
-const words = ['My Universe','My Guiding Star','My Dhanu','My Favorite Hello','My Quiet Riot','My Softest Place'];
+/* ========================= Typewriter phrases ========================= */
+const phrases = ['You are my morning light','Forever my guiding star','My favorite hello','My quiet home','Always yours, Dhanu'];
 const typedEl = document.getElementById('typed');
-let wi=0, ci=0, deleting=false;
+let wi=0, ci=0, del=false;
 (function typeLoop(){
-  const w = words[wi];
-  if(!deleting){ ci++; typedEl.textContent = w.slice(0,ci); }
+  const w = phrases[wi];
+  if(!del){ ci++; typedEl.textContent = w.slice(0,ci); }
   else { ci--; typedEl.textContent = w.slice(0,ci); }
-  let delay = deleting ? 50 : 110;
-  if(!deleting && ci===w.length){ delay = 1200; deleting=true; }
-  if(deleting && ci===0){ deleting=false; wi=(wi+1)%words.length; delay=300; }
+  let delay = del?50:110;
+  if(!del && ci===w.length){ delay = 1400; del = true; }
+  if(del && ci===0){ del=false; wi=(wi+1)%phrases.length; delay=300; }
   setTimeout(typeLoop, delay);
 })();
 
-/* --------------- Audio controls + beat-sync glow -------------- */
-const playBtn = document.getElementById('playBtn');
-let playing=false, fadeTimer=null, pulseInterval=null;
-
-function fadeIn(a,ms=1800){
-  clearInterval(fadeTimer); a.volume = 0; if(a.paused) a.play().catch(()=>{}); const step=0.02; const tick = Math.max(10, ms*step);
-  fadeTimer = setInterval(()=>{ a.volume = Math.min(1, a.volume + step); if(a.volume>=1) clearInterval(fadeTimer); }, tick);
-}
-function fadeOut(a,ms=900){
-  clearInterval(fadeTimer); const step=0.02; const tick = Math.max(10, ms*step);
-  fadeTimer = setInterval(()=>{ a.volume = Math.max(0, a.volume - step); if(a.volume<=0){ a.pause(); clearInterval(fadeTimer); } }, tick);
-}
-function startPulse(){ const el=document.getElementById('portrait'); el.style.transition='transform .35s ease-in-out'; pulseInterval=setInterval(()=>{ el.style.transform='scale(1.035)'; setTimeout(()=>el.style.transform='scale(1)',180) }, 420); }
-function stopPulse(){ clearInterval(pulseInterval); const el=document.getElementById('portrait'); el.style.transform='scale(1)'; }
-
-async function ensureAudioReady(){
-  if(!analyser){ try{ await setupAudioAnalyser(); }catch(e){} }
-}
-ensureAudioReady();
-
-playBtn.addEventListener('click', async ()=>{
-  if(!playing){
-    try{
-      if(audioCtx && audioCtx.state==='suspended') await audioCtx.resume();
-      await audio.play(); fadeIn(audio,1600); playing=true; playBtn.textContent='⏸ Pause the song'; startPulse();
-    }catch(e){ console.warn('play error', e) }
-  } else {
-    fadeOut(audio,1000); playing=false; playBtn.textContent='🎶 Play a song that reminds me of you'; stopPulse();
-  }
-});
-
-// beat-reactive glow using analyser data
-function animateBeat(){
-  if(!analyser) { requestAnimationFrame(animateBeat); return; }
-  analyser.getByteFrequencyData(dataArray);
-  let sum=0; for(let i=0;i<dataArray.length;i++) sum += dataArray[i];
-  const avg = sum / dataArray.length;
-  const g = Math.min(1.8, 1 + avg/110);
-  document.querySelector('.portrait').style.boxShadow = `0 18px 60px rgba(139,79,255,${0.12 * g})`;
-  requestAnimationFrame(animateBeat);
-}
-animateBeat();
-
-/* --------------- Surprise modal + confetti -------------- */
+/* ========================= Surprise modal + confetti ========================= */
 const surpriseBtn = document.getElementById('surpriseBtn');
 const modal = document.getElementById('modal');
 const closeModal = document.getElementById('closeModal');
+const modalTextEl = document.getElementById('modalText');
 
-surpriseBtn.addEventListener('click', ()=>{ modal.classList.add('open'); confettiBurst(); });
+surpriseBtn.addEventListener('click', ()=>{ openModalWithTyping(); confettiBurst(); });
 closeModal.addEventListener('click', ()=> modal.classList.remove('open'));
 
 function confettiBurst(){
-  const count = 150; const conf = [];
-  for(let i=0;i<count;i++){ conf.push({ x: W/2 + rand(-40,40), y: H/2 + rand(-40,40), vx: rand(-8,8), vy: rand(-14,-3), r: rand(4,9), c: `hsl(${rand(280,340)},80%,60%)`, life: rand(60,160) }); }
-  const runner = setInterval(()=>{ pCtx.clearRect(0,0,W,H); for(let p of particles) p.draw(); for(let i=conf.length-1;i>=0;i--){ const f=conf[i]; f.x+=f.vx; f.y+=f.vy; f.vy+=0.45; f.life--; pCtx.fillStyle=f.c; pCtx.fillRect(f.x,f.y,f.r,f.r); if(f.life<=0) conf.splice(i,1); } if(conf.length===0) clearInterval(runner); }, 16);
+  const confCanvas = document.getElementById('confetti');
+  const confCtx = confCanvas.getContext('2d');
+  confCanvas.width = innerWidth; confCanvas.height = innerHeight;
+  const count = 120; const conf = [];
+  for(let i=0;i<count;i++){
+    conf.push({x: W/2 + rand(-60,60), y: H/2 + rand(-60,60), vx:rand(-7,7), vy:rand(-14,-3), r:rand(6,10), c: (Math.random()>0.5? '#fff7e6' : '#ffd89b'), life:rand(60,160)});
+  }
+  const runner = setInterval(()=>{ confCtx.clearRect(0,0,W,H); for(let i=conf.length-1;i>=0;i--){ const f=conf[i]; f.x+=f.vx; f.y+=f.vy; f.vy+=0.45; f.life--; confCtx.fillStyle=f.c; confCtx.fillRect(f.x,f.y,f.r,f.r); if(f.life<=0) conf.splice(i,1);} if(conf.length===0) clearInterval(runner); }, 16);
 }
 
-/* --------------- keyboard / accessibility -------------- */
-document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') modal.classList.remove('open'); if(e.key===' ') { e.preventDefault(); playBtn.click(); } });
+/* modal typing */
+const letter = `Just like the stars paint the night, you paint my life with warmth and light. My promise is golden and steady — I am yours, always.`;
+function openModalWithTyping(){
+  modal.classList.add('open');
+  modalTextEl.textContent = '';
+  let idx = 0;
+  function step(){
+    if(idx <= letter.length){
+      modalTextEl.textContent = letter.slice(0, idx);
+      idx++;
+      setTimeout(step, 28 + (idx%6));
+    }
+  }
+  step();
+}
 
-/* initial feel alive */
-setTimeout(()=>spawnAt(W/2, H/2, 20), 500);
+/* ========================= Non-human complex shimmer follow logic ========================= */
+/*
+  Idea: track pointer relative to portrait center, convert to percentage coords,
+  then smoothly lerp CSS variables (--hx, --hy, --hsz) using requestAnimationFrame.
+  Use an easing curve (exponential smoothing) for a non-linear, organic motion.
+*/
+const portrait = document.getElementById('portrait');
+let target = {x: 50, y: 40, s: 0.6}; // target in percents and size multiplier
+let current = {x: 50, y: 40, s: 0.6};
+let lastTime = performance.now();
+let rafId = null;
+
+// map pointer to portrait-local percentage
+function pointerToPct(clientX, clientY){
+  const rect = portrait.getBoundingClientRect();
+  const px = clientX - rect.left;
+  const py = clientY - rect.top;
+  const pctX = Math.max(0, Math.min(100, (px / rect.width) * 100));
+  const pctY = Math.max(0, Math.min(100, (py / rect.height) * 100));
+  // dynamic size: closer -> smaller highlight, further -> larger
+  const dx = Math.abs(pctX - 50) / 50; // 0..1
+  const dy = Math.abs(pctY - 50) / 50;
+  const dist = Math.sqrt(dx*dx + dy*dy); // 0..~1.414
+  const size = 0.5 + Math.max(0.0, 1 - dist) * 1.0; // 0.5..1.5
+  return {x: pctX, y: pctY * 0.95, s: size};
+}
+
+// pointer event updates target quickly (gesture input)
+portrait.addEventListener('pointermove', (e)=>{
+  target = pointerToPct(e.clientX, e.clientY);
+});
+
+// when pointer leaves portrait, relax highlight to center slowly
+portrait.addEventListener('pointerleave', ()=>{
+  target = {x:50, y:40, s:0.6};
+});
+
+// also update when pointer moves elsewhere to create slight "attraction"
+window.addEventListener('pointermove', (e)=>{
+  // if pointer is far from portrait, we still nudge target slightly toward center
+  const rect = portrait.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const d = Math.hypot(e.clientX - cx, e.clientY - cy);
+  const max = Math.hypot(window.innerWidth, window.innerHeight);
+  const influence = 1 - Math.min(1, d / (max * 0.6)); // 0..1
+  if(influence > 0.02 && (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom)){
+    // small bias toward pointer direction even if outside
+    const pct = pointerToPct(e.clientX, e.clientY);
+    target.x = 50 + (pct.x - 50) * Math.min(0.18, influence*0.18);
+    target.y = 40 + (pct.y - 40) * Math.min(0.18, influence*0.18);
+    target.s = 0.6 + (pct.s - 0.6) * Math.min(0.25, influence*0.25);
+  }
+});
+
+// exponential smoothing + dynamic timestep integration for "non-human" feel
+function smoothStep(now){
+  const dt = Math.min(32, now - lastTime);
+  lastTime = now;
+  // smoothing factor depends on dt (frame-rate aware)
+  const tau = 120; // time constant in ms — smaller = snappier, larger = heavier trailing
+  const alpha = 1 - Math.exp(-dt / tau);
+
+  // use a non-linear easing: apply alpha to differences but warp a bit for elasticity
+  // compute difference
+  const dx = target.x - current.x;
+  const dy = target.y - current.y;
+  const ds = target.s - current.s;
+
+  // apply eased increment
+  // nonlinear: scale alpha by a function of distance to make small nudges very smooth and larger jumps elastic
+  const scale = Math.tanh(Math.hypot(dx,dy)/40) * 1.1 + 0.05;
+  current.x += dx * alpha * scale;
+  current.y += dy * alpha * scale;
+  current.s += ds * alpha * (0.9 + Math.abs(ds)*0.6);
+
+  // write back to CSS variables (rounded for cleanliness)
+  portrait.style.setProperty('--hx', current.x.toFixed(2) + '%');
+  portrait.style.setProperty('--hy', current.y.toFixed(2) + '%');
+  portrait.style.setProperty('--hsz', (current.s).toFixed(3));
+
+  rafId = requestAnimationFrame(smoothStep);
+}
+rafId = requestAnimationFrame((t)=>{ lastTime = t; smoothStep(t); });
+
+/* accessibility: close with escape */
+document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') document.getElementById('modal').classList.remove('open'); });
 
 /* recompute const points after image load */
-document.getElementById('dhanuImg').addEventListener('load', ()=>{ computeConstPoints(); });
+const dhanuImg = document.getElementById('dhanuImg');
+dhanuImg.addEventListener('load', ()=>{ computeConstPoints(); });
 
+/* initial alive feel */
+setTimeout(()=>spawnAt(W/2,H/2,26), 600);
 </script>
 </body>
 </html>
