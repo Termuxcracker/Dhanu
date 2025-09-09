@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Heart's Locket, For Dhanu</title>
+    <title>A Gentle Unfolding for Dhanu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,163 +11,194 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000;
+            background: linear-gradient(to bottom, #0a0a0a, #1a0a2a, #2a0a3a);
             margin: 0;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: white;
-            position: relative;
-            cursor: pointer;
+            color: #f3e8ff;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            width: 300px;
-            height: 300px;
+        .bg-gradient-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 10%, #4a00e0 0%, transparent 40%),
+                        radial-gradient(circle at 80% 80%, #a200ff 0%, transparent 40%),
+                        radial-gradient(circle at 20% 60%, #ff00ea 0%, transparent 40%);
+            background-size: 200% 200%;
+            animation: moveGradient 20s ease-in-out infinite alternate;
         }
-        .locket-front, .locket-back {
-            position: absolute;
-            width: 150px;
-            height: 200px;
-            background: #2D2D44;
-            border: 2px solid #5A4E81;
-            border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(126, 34, 206, 0.4);
-            transition: transform 1.5s ease-in-out, opacity 1.5s ease;
-            transform-origin: left center;
+        @keyframes moveGradient {
+            0% { background-position: 0% 50%, 50% 100%, 100% 0%; }
+            100% { background-position: 100% 50%, 0% 0%, 50% 100%; }
         }
-        .locket-front {
-            left: 50%;
-            transform: rotateY(0deg);
-        }
-        .locket-back {
-            right: 50%;
-            transform: rotateY(0deg);
-        }
-        .locket-front .content, .locket-back .content {
+        .content-section {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100%;
-            padding: 1rem;
             text-align: center;
+            height: 100vh;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            padding: 2rem;
         }
-        .locket-front .content h1 {
+        .content-section.visible {
+            opacity: 1;
+        }
+        .title {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
-            text-shadow: 0 0 5px #fce7f3;
+            text-shadow: 0 0 10px #f3e8ff;
+            margin-bottom: 2rem;
+            position: relative;
         }
-        .locket-front p {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        .container.open .locket-front {
-            transform: rotateY(-180deg);
-            opacity: 0;
-        }
-        .container.open .locket-back {
-            transform: rotateY(180deg);
-            opacity: 0;
-        }
-        .locket-inner {
+        .title::after {
+            content: '';
             position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 300px;
-            height: 200px;
-            transition: opacity 1.5s ease;
-            opacity: 0;
-            pointer-events: none;
+            left: 50%;
+            bottom: -1rem;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 2px;
+            background-color: #f3e8ff;
+            animation: pulse-line 2s infinite;
         }
-        .container.open .locket-inner {
-            opacity: 1;
-            pointer-events: auto;
+        @keyframes pulse-line {
+            0%, 100% { transform: translateX(-50%) scaleX(1); }
+            50% { transform: translateX(-50%) scaleX(1.5); }
         }
-        .locket-inner-left, .locket-inner-right {
-            width: 50%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-            background: #2D2D44;
-            border: 2px solid #5A4E81;
-            border-radius: 1rem;
-            box-shadow: 0 0 20px rgba(126, 34, 206, 0.4);
-            box-sizing: border-box;
-        }
-        .locket-inner-left {
-            border-right: none;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        .locket-inner-right {
-            border-left: none;
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-        .locket-inner-left h2 {
+        .poem-line {
             font-family: 'Playfair Display', serif;
             font-size: 1.5rem;
-            margin-bottom: 0.5rem;
+            margin: 1rem 0;
+            opacity: 0.1;
+            transition: opacity 1s ease-in-out;
         }
-        .locket-inner-left p {
-            font-size: 0.9rem;
-            text-align: center;
-            font-style: italic;
+        .poem-line.visible {
+            opacity: 1;
         }
-        .locket-inner-right img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 0.5rem;
-            object-fit: contain;
-            box-shadow: 0 0 10px rgba(252, 231, 243, 0.5);
+        .final-section {
+            height: 150vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 20vh;
+        }
+        .dhanu-image {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            transition: transform 0.5s ease-out, box-shadow 0.5s ease-out;
+        }
+        .final-message {
+            margin-top: 2rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            text-shadow: 0 0 15px #f3e8ff;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            max-width: 600px;
+            padding: 1rem;
+            border: 1px solid transparent;
+            border-radius: 1rem;
+        }
+        @media (min-width: 768px) {
+            .title { font-size: 3rem; }
+            .poem-line { font-size: 2rem; }
+            .final-message { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="locket-container">
-        <div class="locket-front">
-            <div class="content">
-                <h1 class="text-white">To Dhanu</h1>
-                <p class="text-gray-300">A digital locket for you. Click to open.</p>
-            </div>
-        </div>
-        <div class="locket-inner">
-            <div class="locket-inner-left">
-                <h2>My Dearest Dhanu</h2>
-                <p>
-                    From the moment our stars aligned,<br>
-                    A new universe I did find.<br>
-                    Within your eyes, a story untold,<br>
-                    A love more precious than gold.<br><br>
-                    My heart's locket, now open for you,<br>
-                    Contains my love, so pure and true.<br>
-                    May this memory, in your heart, reside,<br>
-                    With me always, by your side.
-                </p>
-            </div>
-            <div class="locket-inner-right">
-                <img src="dhanu.png" alt="A photo of my love, Dhanu" onerror="this.onerror=null;this.src='https://placehold.co/150x200/5A4E81/FFFFFF?text=Dhanu';" />
-            </div>
-        </div>
+    <div class="bg-gradient-animation"></div>
+
+    <div class="content-section" id="section1">
+        <h1 class="title">My Dearest Dhanu,</h1>
     </div>
-    
+
+    <div class="content-section" id="section2">
+        <p class="poem-line">In this world of endless skies,</p>
+        <p class="poem-line">My compass is in your eyes.</p>
+    </div>
+
+    <div class="content-section" id="section3">
+        <p class="poem-line">A whispered star, a gentle glow,</p>
+        <p class="poem-line">A story only our hearts know.</p>
+    </div>
+
+    <div class="content-section" id="section4">
+        <p class="poem-line">Each moment, a constellation so grand,</p>
+        <p class="poem-line">Held in the comfort of your hand.</p>
+    </div>
+
+    <div class="final-section">
+        <img id="dhanuImage" src="dhanu.png" alt="My love, Dhanu" class="dhanu-image" onerror="this.onerror=null;this.src='https://placehold.co/300x300/1a0a2a/f3e8ff?text=Dhanu';" />
+        <p class="final-message text-center" id="finalMessage">
+            You are the universe I never knew I was searching for.
+        </p>
+    </div>
+
     <script>
-        const container = document.getElementById('locket-container');
-        container.addEventListener('click', () => {
-            container.classList.toggle('open');
+        const sections = document.querySelectorAll('.content-section');
+        const finalSection = document.querySelector('.final-section');
+        const dhanuImage = document.getElementById('dhanuImage');
+        const finalMessage = document.getElementById('finalMessage');
+
+        // Initial image size and shadow
+        const baseSize = 250;
+        const baseShadow = 0;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.5 
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const poemLines = entry.target.querySelectorAll('.poem-line');
+                    if (poemLines.length > 0) {
+                        poemLines.forEach((line, index) => {
+                            setTimeout(() => {
+                                line.classList.add('visible');
+                            }, index * 500); 
+                        });
+                    }
+                } else {
+                    entry.target.classList.remove('visible');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => observer.observe(section));
+
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const finalSectionTop = finalSection.offsetTop;
+            const windowHeight = window.innerHeight;
+
+            if (scrollY > finalSectionTop - windowHeight) {
+                const scrollProgress = (scrollY - (finalSectionTop - windowHeight)) / (finalSection.clientHeight - windowHeight);
+                
+                const newSize = baseSize + (200 * scrollProgress); 
+                dhanuImage.style.transform = `scale(${1 + scrollProgress * 0.5})`;
+                dhanuImage.style.boxShadow = `0 0 ${baseShadow + scrollProgress * 50}px rgba(255, 255, 255, ${0.5 + scrollProgress * 0.5})`;
+
+                if (scrollProgress > 0.8) {
+                    finalMessage.classList.add('visible');
+                } else {
+                    finalMessage.classList.remove('visible');
+                }
+            }
         });
     </script>
 </body>
