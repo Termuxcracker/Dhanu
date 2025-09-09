@@ -1,463 +1,424 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Dhanu — Galaxy of Gold ✨</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --gold-1:#ffd700;
-    --gold-2:#ffefb0;
-    --white:#ffffff;
-    --ink:#08050a;
-    --glass: rgba(255,255,255,0.06);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:linear-gradient(160deg,var(--ink),#120812 45%, #2b0b12 100%);font-family:Poppins,system-ui,Arial;color:var(--white);overflow:hidden}
-  .wrap{position:relative;min-height:100vh;display:grid;place-items:center;padding:28px;perspective:1000px}
-  .aurora{position:absolute;inset:-25%;z-index:0;pointer-events:none;filter:blur(36px) saturate(1.1);mix-blend-mode:screen;transition:transform .15s linear}
-  .aurora .band{position:absolute;left:0;right:0;height:40%;border-radius:50%;opacity:0.12}
-  .band.a{top:-14%;background:radial-gradient(circle at 20% 20%, rgba(246,211,101,0.95), transparent 30%);transform:rotate(-10deg)}
-  .band.b{bottom:-14%;background:radial-gradient(circle at 80% 40%, rgba(250,226,176,0.9), transparent 35%);transform:rotate(8deg)}
-  .vignette{position:fixed;inset:0;box-shadow:inset 0 120px 220px rgba(0,0,0,0.6);pointer-events:none;z-index:200}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Celestial Love Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
-  .card-wrap { transform-style:preserve-3d; transition:transform .12s ease-out; will-change:transform; }
-  .card{position:relative;z-index:30;width:min(1040px,96%);max-width:1040px;padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 90px rgba(0,0,0,0.6);transform:translateZ(0); will-change:transform}
-  .row{display:flex;gap:26px;align-items:center}
-  @media (max-width:840px){.row{flex-direction:column-reverse;padding:8px}}
-
-  /* portrait area */
-  .portrait {
-    position:relative;
-    width:260px;
-    height:260px;
-    border-radius:50%;
-    flex:0 0 260px;
-    padding:8px;
-    background:linear-gradient(135deg,var(--gold-1),var(--gold-2));
-    display:grid;
-    place-items:center;
-    transition:transform .28s ease, box-shadow .28s ease;
-    overflow:hidden;
-    /* CSS variables for follow highlight */
-    --hx: 50%;
-    --hy: 40%;
-    --hsz: 0.6; /* highlight size multiplier */
-  }
-
-  /* moving soft shimmer (sweep) */
-  .portrait::after{
-    content:"";
-    position:absolute;
-    inset:0;
-    border-radius:50%;
-    background:linear-gradient(120deg, transparent 40%, rgba(255,255,255,0.85) 50%, transparent 60%);
-    transform:translateX(-120%) rotate(25deg);
-    animation:shimmer 4.4s linear infinite;
-    pointer-events:none;
-    mix-blend-mode:screen;
-    opacity:0.9;
-  }
-  @keyframes shimmer{0%{transform:translateX(-120%) rotate(25deg)}60%{transform:translateX(140%) rotate(25deg)}100%{transform:translateX(140%) rotate(25deg)}}
-
-  /* highlight that follows pointer (smooth, soft radial) */
-  .portrait::before{
-    content:"";
-    position:absolute;
-    left:0; top:0;
-    width:100%; height:100%;
-    border-radius:50%;
-    pointer-events:none;
-    /* radial gradient uses CSS vars controlled by JS */
-    background:
-      radial-gradient(
-        circle at var(--hx) var(--hy),
-        rgba(255,248,220,0.95) calc(12% * var(--hsz)),
-        rgba(255,238,160,0.55) calc(16% * var(--hsz)),
-        rgba(255,224,120,0.12) calc(35% * var(--hsz)),
-        transparent 45%
-      );
-    mix-blend-mode:screen;
-    transition:opacity .12s linear;
-    opacity:0.95;
-    filter:blur(8px);
-    transform:translateZ(10px);
-  }
-
-  .portrait img{
-    width:100%; height:100%; border-radius:50%; object-fit:cover;
-    border:6px solid rgba(255,255,255,0.06); box-shadow:0 18px 60px rgba(245,196,107,0.12); display:block; transform-origin:center;
-    transition:transform .18s linear;
-  }
-
-  /* text & controls */
-  h1{font-family:'Great Vibes',cursive;font-size:48px;margin:0;color:var(--gold-1);text-shadow:0 18px 36px rgba(245,196,107,0.12)}
-  .sub{margin-top:8px;color:rgba(255,245,238,0.95);font-size:15px}
-  .typewrap{margin-top:16px;height:56px;display:flex;align-items:center;gap:12px}
-  .typed{font-weight:700;font-size:20px;color:#fff}
-  .caret{width:3px;height:30px;background:linear-gradient(180deg,var(--gold-1),var(--gold-2));animation:blink 1s steps(2,end) infinite}
-  @keyframes blink{50%{opacity:0}}
-  .promise{margin-top:14px;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);font-size:15px;color:#fff;display:inline-block;animation:softPulse 2.6s infinite alternate}
-  @keyframes softPulse{0%{transform:scale(1);opacity:.95}50%{transform:scale(1.02);opacity:1}100%{transform:scale(1);opacity:.95}}
-
-  .controls{display:flex;gap:12px;margin-top:18px;align-items:center;flex-wrap:wrap}
-  .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:700;cursor:pointer}
-  .surp{background:linear-gradient(90deg,var(--white),#fff2d6);color:#2a0a00;border:1px solid rgba(0,0,0,0.06);box-shadow:0 14px 36px rgba(0,0,0,0.12)}
-  .note{margin-top:12px;font-size:13px;color:rgba(255,245,230,0.75)}
-
-  canvas#particles, canvas#trail, canvas#constell, canvas#confetti {position:absolute;inset:0;z-index:6;pointer-events:none}
-
-  .petal{position:absolute;pointer-events:none;z-index:22;font-size:28px;transform-origin:center}
-
-  .modal{position:fixed;inset:0;display:grid;place-items:center;background:radial-gradient(circle at center, rgba(8,6,10,0.6), rgba(0,0,0,0.85));z-index:240;backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity .28s}
-  .modal.open{opacity:1;pointer-events:auto}
-  .modal-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:26px;border-radius:14px;border:1px solid rgba(255,255,255,0.04);max-width:720px;color:#1a0b00}
-  .modal h2{margin:0 0 8px;font-size:28px;color:var(--gold-2);font-family:'Great Vibes',cursive}
-  .modal p{color:#2b1608;line-height:1.6;min-height:3em}
-  @media (max-width:520px){h1{font-size:38px}.portrait{width:180px;height:180px;flex:0 0 180px}}
-</style>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Expose Firebase modules to the global scope
+        window.firebase = {
+            initializeApp,
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged,
+            getFirestore,
+            doc,
+            getDoc,
+            addDoc,
+            setDoc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            collection,
+            query,
+            where,
+            getDocs,
+            setLogLevel
+        };
+    </script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            color: #fff;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.4);
+            transition: background-color 1.5s ease;
+        }
+        .ui-container.hidden {
+            background-color: rgba(0, 0, 0, 0);
+            pointer-events: none;
+        }
+        .glowing-title {
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 0 10px #fce7f3, 0 0 20px #fce7f3;
+            animation: pulse-glow 2s infinite ease-in-out;
+            transition: opacity 1.5s ease;
+        }
+        .ui-container.hidden .glowing-title, .ui-container.hidden .ui-text {
+            opacity: 0;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 5px #fce7f3, 0 0 10px #fce7f3; }
+            50% { text-shadow: 0 0 10px #fce7f3, 0 0 20px #fce7f3, 0 0 30px #fce7f3; }
+        }
+        .reveal-button {
+            background-color: #7e22ce;
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            margin-top: 1rem;
+            cursor: pointer;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+        .reveal-button:hover {
+            background-color: #9333ea;
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        .final-message-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease;
+        }
+        .final-message-container.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .final-message {
+            max-width: 600px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(252, 231, 243, 0.4);
+            text-align: center;
+        }
+        .user-id {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            z-index: 30;
+        }
+    </style>
 </head>
 <body>
-  <div class="aurora" aria-hidden="true"><div class="band a"></div><div class="band b"></div></div>
-  <div class="vignette" aria-hidden="true"></div>
+    <div class="user-id" id="user-id-display">Connecting...</div>
 
-  <div class="wrap">
-    <div class="card-wrap" id="cardWrap">
-      <div class="card" role="main" aria-label="Love page for Dhanu">
-        <div class="row">
-          <div class="portrait" id="portrait">
-            <img id="dhanuImg" src="dhanu.png" alt="Dhanu" onerror="this.src='https://placehold.co/480x480/f6d365/3a1b00?text=Dhanu'">
-          </div>
+    <div class="ui-container" id="ui-container">
+        <h1 class="glowing-title text-4xl md:text-6xl mb-4">Welcome to Our Universe</h1>
+        <p class="ui-text text-sm md:text-lg text-gray-400 mb-8">Click to add a memory and begin our journey.</p>
+        <button id="startButton" class="reveal-button">Start Our Journey</button>
+    </div>
 
-          <div class="content">
-            <h1>For Dhanu</h1>
-            <div class="sub">a gold & white galaxy, made just for you</div>
-
-            <div class="typewrap" aria-hidden="true">
-              <div class="typed" id="typed">my favorite hello</div>
-              <div class="caret" aria-hidden="true"></div>
-            </div>
-
-            <div class="promise" id="promise">I promise to hold you through the soft and loud days alike.</div>
-
-            <div class="controls">
-              <button class="btn surp" id="surpriseBtn">✨ Reveal My Heart</button>
-              <div style="flex:1"></div>
-            </div>
-
-            <div class="note">Tip: Click / tap anywhere to sprinkle stardust & hearts. Hover near the portrait for constellations.</div>
-          </div>
+    <div class="final-message-container" id="final-message-container">
+        <div class="final-message">
+            <h2 class="text-3xl md:text-4xl text-pink-300 font-bold mb-4">You Are My Universe, Dhanu</h2>
+            <p class="text-md md:text-lg leading-relaxed text-gray-200">
+                My love, the stars you see are countless, yet they all lead to you. You are the center of my every thought, the core of my every dream. My life's journey is not a search for constellations, but a simple path back to you. I love you more than all the stars combined.
+            </p>
+            <p class="mt-4 text-xs text-gray-500">
+                This constellation, built with our memories, is for you.
+            </p>
         </div>
-      </div>
     </div>
 
-    <canvas id="particles"></canvas>
-    <canvas id="trail"></canvas>
-    <canvas id="constell"></canvas>
-    <canvas id="confetti"></canvas>
-  </div>
+    <canvas id="main-canvas"></canvas>
 
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-card">
-      <h2 id="modal-title">My Dearest Dhanu,</h2>
-      <p id="modalText"></p>
-      <div style="margin-top:18px;display:flex;gap:12px;justify-content:flex-end">
-        <button class="btn surp" id="closeModal">Close</button>
-      </div>
-    </div>
-  </div>
+    <script type="module">
+        window.onload = function() {
+            // Firebase Globals (MANDATORY)
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : '';
+            
+            // Check for WebGL compatibility
+            if (!window.WebGLRenderingContext) {
+                const message = document.createElement('div');
+                message.innerHTML = '<p class="text-red-500 text-center p-4">Your browser does not support WebGL. Please use a modern browser.</p>';
+                document.body.appendChild(message);
+                return;
+            }
 
-<script>
-/* ========================= Utilities ========================= */
-const rand = (a,b)=>Math.random()*(b-a)+a;
+            let app, db, auth;
+            let userId = 'anonymous';
 
-/* ========================= Parallax tilt ========================= */
-const cardWrap = document.getElementById('cardWrap');
-const aurora = document.querySelector('.aurora');
-let ww = innerWidth, wh = innerHeight;
-window.addEventListener('resize', ()=>{ ww = innerWidth; wh = innerHeight; });
+            // Three.js setup
+            let scene, camera, renderer, particles, sphere;
+            let cameraTargetPosition = new THREE.Vector3(0, 0, 0);
+            let userMemories = [];
+            let memoryParticles = null;
 
-window.addEventListener('pointermove', (e)=>{
-  const nx = (e.clientX/ww) - 0.5;
-  const ny = (e.clientY/wh) - 0.5;
-  const rotX = (-ny) * 6;
-  const rotY = nx * 8;
-  cardWrap.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) translateZ(0)`;
-  aurora.style.transform = `translateX(${nx*8}px) translateY(${ny*6}px)`;
-});
-window.addEventListener('pointerleave', ()=>{ cardWrap.style.transform = ''; aurora.style.transform = ''; });
+            // Tone.js setup
+            const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+            function playSoundscape() {
+                const now = Tone.now();
+                synth.triggerAttackRelease(["C3", "G3", "C4"], "8n", now);
+            }
 
-/* ========================= Particles (gold stars) ========================= */
-const pCanvas = document.getElementById('particles');
-const pCtx = pCanvas.getContext('2d');
-let W = pCanvas.width = innerWidth, H = pCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ W = pCanvas.width = innerWidth; H = pCanvas.height = innerHeight; spawnEdge(); computeConstPoints(); drawConstell(); });
+            async function initFirebase() {
+                try {
+                    firebase.setLogLevel('debug');
+                    app = firebase.initializeApp(firebaseConfig);
+                    db = firebase.getFirestore(app);
+                    auth = firebase.getAuth(app);
+                    
+                    if (initialAuthToken) {
+                        await firebase.signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await firebase.signInAnonymously(auth);
+                    }
+                    
+                    firebase.onAuthStateChanged(auth, async (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            document.getElementById('user-id-display').innerText = `User ID: ${userId}`;
+                            await loadMemories();
+                        } else {
+                            userId = `guest-${Math.random().toString(36).substring(2, 15)}`;
+                            document.getElementById('user-id-display').innerText = `User ID: ${userId}`;
+                        }
+                    });
 
-class Star {
-  constructor(){ this.reset(); }
-  reset(){ this.x = rand(0,W); this.y = rand(0,H); this.r = rand(0.6,3.6); this.vx = rand(-0.12,0.12); this.vy = rand(-0.22,-0.03); this.h = rand(40,50); this.a = rand(0.08,0.9); }
-  update(){ this.x += this.vx; this.y += this.vy; if(this.y < -10){ this.y = H+10; this.x = rand(0,W) } }
-  draw(){ pCtx.beginPath(); pCtx.fillStyle = `hsla(${this.h},90%,60%,${this.a})`; pCtx.arc(this.x,this.y,this.r,0,Math.PI*2); pCtx.fill(); }
-}
-const stars = [];
-for(let i=0;i<220;i++) stars.push(new Star());
-function spawnEdge(){ for(let i=0;i<6;i++) stars.push(new Star()); }
-function drawStars(){ pCtx.clearRect(0,0,W,H); for(let s of stars){ s.update(); s.draw(); } requestAnimationFrame(drawStars); }
-drawStars();
+                } catch (e) {
+                    console.error("Error initializing Firebase:", e);
+                }
+            }
 
-/* ========================= Cursor trail (soft sparkles) ========================= */
-const tCanvas = document.getElementById('trail');
-const tCtx = tCanvas.getContext('2d');
-tCanvas.width = innerWidth; tCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ tCanvas.width = innerWidth; tCanvas.height = innerHeight; });
+            async function saveMemory(x, y, z) {
+                if (!db || !userId || userId === 'anonymous') {
+                    console.error("Firebase not initialized or user not authenticated.");
+                    return;
+                }
+                const memoriesRef = firebase.collection(db, `/artifacts/${appId}/users/${userId}/dhanu_memories`);
+                try {
+                    await firebase.addDoc(memoriesRef, {
+                        x: x,
+                        y: y,
+                        z: z,
+                        createdAt: firebase.serverTimestamp()
+                    });
+                    console.log("Memory saved successfully!");
+                } catch (e) {
+                    console.error("Error adding document: ", e);
+                }
+            }
 
-const trail = [];
-class Dot {
-  constructor(x,y,h){ this.x=x; this.y=y; this.vx=rand(-0.8,0.8); this.vy=rand(-1.6,-0.4); this.r=rand(0.6,2.6); this.h=h; this.life=rand(40,100); }
-  update(){ this.x += this.vx; this.y += this.vy; this.life--; this.r *= 0.995; }
-  draw(){ tCtx.beginPath(); tCtx.fillStyle = `hsla(${this.h},85%,60%,${Math.max(0,this.life/100)})`; tCtx.arc(this.x,this.y,this.r,0,Math.PI*2); tCtx.fill(); }
-}
-function drawTrail(){ tCtx.clearRect(0,0,tCanvas.width,tCanvas.height); for(let i=trail.length-1;i>=0;i--){ const d=trail[i]; d.update(); d.draw(); if(d.life<=0) trail.splice(i,1); } requestAnimationFrame(drawTrail); }
-drawTrail();
-window.addEventListener('pointermove',(e)=>{ for(let i=0;i<2;i++) trail.push(new Dot(e.clientX+rand(-6,6), e.clientY+rand(-6,6), rand(40,48))); });
+            async function loadMemories() {
+                if (!db || !userId) return;
 
-/* ========================= Falling hearts/petals ========================= */
-function makePetal(x,y){
-  const el = document.createElement('div');
-  el.className = 'petal';
-  el.innerText = Math.random()>0.5? '🌼' : '❤';
-  el.style.left = (x + rand(-60,60)) + 'px';
-  el.style.top = (y - 10) + 'px';
-  el.style.opacity = rand(0.65,1);
-  el.style.fontSize = (rand(20,40)) + 'px';
-  el.style.color = rand(0,1) > 0.5 ? '#fff9e6' : '#ffd89b';
-  document.body.appendChild(el);
+                try {
+                    const memoriesRef = firebase.collection(db, `/artifacts/${appId}/users/${userId}/dhanu_memories`);
+                    const q = firebase.query(memoriesRef);
+                    const querySnapshot = await firebase.getDocs(q);
+                    userMemories = querySnapshot.docs.map(doc => doc.data());
+                    
+                    if (memoryParticles) {
+                         scene.remove(memoryParticles);
+                    }
+                    
+                    if (userMemories.length > 0) {
+                        const memoryGeometry = new THREE.BufferGeometry();
+                        const positions = new Float32Array(userMemories.length * 3);
+                        const colors = new Float32Array(userMemories.length * 3);
+                        
+                        userMemories.forEach((mem, i) => {
+                            positions[i * 3] = mem.x;
+                            positions[i * 3 + 1] = mem.y;
+                            positions[i * 3 + 2] = mem.z;
+                            colors[i * 3] = 1;
+                            colors[i * 3 + 1] = 0.8;
+                            colors[i * 3 + 2] = 0.9;
+                        });
 
-  const dur = rand(3000,9000);
-  const start = performance.now();
-  const startX = parseFloat(el.style.left);
-  const startY = parseFloat(el.style.top);
-  const endX = startX + rand(-200,200);
-  const endY = H + 120;
+                        memoryGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                        memoryGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-  function tick(t){
-    const p = (t - start) / dur;
-    if(p >= 1){ el.remove(); return; }
-    const nx = startX + (endX-startX)*p;
-    const ny = startY + (endY-startY)*p + Math.sin(p*6)*40;
-    el.style.left = nx + 'px';
-    el.style.top = ny + 'px';
-    el.style.transform = `rotate(${p*720}deg) scale(${1 - p*0.2})`;
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-window.addEventListener('pointerdown', (e)=>{
-  spawnAt(e.clientX,e.clientY,12);
-  for(let i=0;i<5;i++) makePetal(e.clientX + rand(-20,20), e.clientY + rand(-10,10));
-});
-function spawnAt(x,y,n=6){
-  for(let i=0;i<n;i++){
-    const s = new Star();
-    s.x = x + rand(-12,12); s.y = y + rand(-12,12); s.vx = rand(-1,1); s.vy = rand(-2,-0.2);
-    stars.push(s);
-  }
-}
-setInterval(()=>spawnAt(rand(40,W-40), rand(40,H-40), 3), 900);
+                        const memoryMaterial = new THREE.PointsMaterial({
+                            size: 3,
+                            vertexColors: true,
+                            blending: THREE.AdditiveBlending,
+                            transparent: true,
+                            sizeAttenuation: true,
+                            depthWrite: false
+                        });
+                        memoryParticles = new THREE.Points(memoryGeometry, memoryMaterial);
+                        scene.add(memoryParticles);
+                    }
+                } catch (e) {
+                    console.error("Error loading memories: ", e);
+                }
+            }
 
-/* ========================= Constellation lines near portrait ========================= */
-const cCanvas = document.getElementById('constell');
-const cCtx = cCanvas.getContext('2d');
-cCanvas.width = innerWidth; cCanvas.height = innerHeight;
-window.addEventListener('resize', ()=>{ cCanvas.width = innerWidth; cCanvas.height = innerHeight; });
+            function initThreeJs() {
+                const canvas = document.getElementById('main-canvas');
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                camera.position.z = 200;
 
-let constPoints = [];
-function computeConstPoints(){
-  const img = document.getElementById('dhanuImg');
-  const rect = img.getBoundingClientRect();
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
-  constPoints = [];
-  const count = 12;
-  for(let i=0;i<count;i++){
-    const angle = (Math.PI*2)*(i/count) + rand(-0.4,0.4);
-    const dist = rect.width*0.9 + rand(-40,160);
-    constPoints.push({x: cx + Math.cos(angle)*dist + rand(-40,40), y: cy + Math.sin(angle)*dist + rand(-40,40), a: rand(0.3,1)});
-  }
-}
-computeConstPoints();
-window.addEventListener('resize', computeConstPoints);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
 
-function drawConstell(){
-  cCtx.clearRect(0,0,cCanvas.width,cCanvas.height);
-  if(constPoints.length>0){
-    for(let i=0;i<constPoints.length;i++){
-      const p = constPoints[i];
-      const img = document.getElementById('dhanuImg');
-      const r = img.getBoundingClientRect();
-      const cx = r.left + r.width/2, cy = r.top + r.height/2;
-      cCtx.beginPath();
-      cCtx.moveTo(p.x, p.y);
-      const mx = (p.x + cx)/2 + rand(-30,30);
-      const my = (p.y + cy)/2 + rand(-20,20);
-      cCtx.quadraticCurveTo(mx, my, cx, cy);
-      cCtx.strokeStyle = `rgba(255,230,190,${0.06 + 0.12*p.a})`;
-      cCtx.lineWidth = 1.1;
-      cCtx.stroke();
-      cCtx.beginPath();
-      cCtx.fillStyle = `rgba(255,230,170,${0.7*p.a})`;
-      cCtx.arc(p.x, p.y, 2 + p.a*2, 0, Math.PI*2); cCtx.fill();
-    }
-  }
-  requestAnimationFrame(drawConstell);
-}
-drawConstell();
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+                scene.add(ambientLight);
 
-/* ========================= Typewriter phrases ========================= */
-const phrases = ['You are my morning light','Forever my guiding star','My favorite hello','My quiet home','Always yours, Dhanu'];
-const typedEl = document.getElementById('typed');
-let wi=0, ci=0, del=false;
-(function typeLoop(){
-  const w = phrases[wi];
-  if(!del){ ci++; typedEl.textContent = w.slice(0,ci); }
-  else { ci--; typedEl.textContent = w.slice(0,ci); }
-  let delay = del?50:110;
-  if(!del && ci===w.length){ delay = 1400; del = true; }
-  if(del && ci===0){ del=false; wi=(wi+1)%phrases.length; delay=300; }
-  setTimeout(typeLoop, delay);
-})();
+                const pointLight = new THREE.PointLight(0xffffff, 1, 1000);
+                pointLight.position.set(0, 0, 50);
+                scene.add(pointLight);
 
-/* ========================= Surprise modal + confetti ========================= */
-const surpriseBtn = document.getElementById('surpriseBtn');
-const modal = document.getElementById('modal');
-const closeModal = document.getElementById('closeModal');
-const modalTextEl = document.getElementById('modalText');
+                const textureLoader = new THREE.TextureLoader();
+                const geometry = new THREE.SphereGeometry(25, 64, 64);
+                
+                textureLoader.load('dhanu.png',
+                    function (texture) {
+                        const material = new THREE.MeshStandardMaterial({
+                            map: texture,
+                            metalness: 0.2,
+                            roughness: 0.8,
+                            transparent: true
+                        });
+                        sphere = new THREE.Mesh(geometry, material);
+                        scene.add(sphere);
+                    },
+                    undefined,
+                    function (err) {
+                        console.error('An error happened loading the Dhanu image texture.', err);
+                        const fallbackMaterial = new THREE.MeshStandardMaterial({ color: 0x9c27b0, wireframe: true });
+                        sphere = new THREE.Mesh(geometry, fallbackMaterial);
+                        scene.add(sphere);
+                    }
+                );
 
-surpriseBtn.addEventListener('click', ()=>{ openModalWithTyping(); confettiBurst(); });
-closeModal.addEventListener('click', ()=> modal.classList.remove('open'));
+                const particleCount = 20000;
+                const particleGeometry = new THREE.BufferGeometry();
+                const positions = new Float32Array(particleCount * 3);
+                const colors = new Float32Array(particleCount * 3);
 
-function confettiBurst(){
-  const confCanvas = document.getElementById('confetti');
-  const confCtx = confCanvas.getContext('2d');
-  confCanvas.width = innerWidth; confCanvas.height = innerHeight;
-  const count = 120; const conf = [];
-  for(let i=0;i<count;i++){
-    conf.push({x: W/2 + rand(-60,60), y: H/2 + rand(-60,60), vx:rand(-7,7), vy:rand(-14,-3), r:rand(6,10), c: (Math.random()>0.5? '#fff7e6' : '#ffd89b'), life:rand(60,160)});
-  }
-  const runner = setInterval(()=>{ confCtx.clearRect(0,0,W,H); for(let i=conf.length-1;i>=0;i--){ const f=conf[i]; f.x+=f.vx; f.y+=f.vy; f.vy+=0.45; f.life--; confCtx.fillStyle=f.c; confCtx.fillRect(f.x,f.y,f.r,f.r); if(f.life<=0) conf.splice(i,1);} if(conf.length===0) clearInterval(runner); }, 16);
-}
+                for (let i = 0; i < particleCount * 3; i++) {
+                    positions[i] = (Math.random() - 0.5) * 2000;
+                    colors[i] = Math.random();
+                }
 
-/* modal typing */
-const letter = `Just like the stars paint the night, you paint my life with warmth and light. My promise is golden and steady — I am yours, always.`;
-function openModalWithTyping(){
-  modal.classList.add('open');
-  modalTextEl.textContent = '';
-  let idx = 0;
-  function step(){
-    if(idx <= letter.length){
-      modalTextEl.textContent = letter.slice(0, idx);
-      idx++;
-      setTimeout(step, 28 + (idx%6));
-    }
-  }
-  step();
-}
+                particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+                const particleMaterial = new THREE.PointsMaterial({
+                    size: 1,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    sizeAttenuation: true,
+                    depthWrite: false
+                });
 
-/* ========================= Non-human complex shimmer follow logic ========================= */
-/*
-  Idea: track pointer relative to portrait center, convert to percentage coords,
-  then smoothly lerp CSS variables (--hx, --hy, --hsz) using requestAnimationFrame.
-  Use an easing curve (exponential smoothing) for a non-linear, organic motion.
-*/
-const portrait = document.getElementById('portrait');
-let target = {x: 50, y: 40, s: 0.6}; // target in percents and size multiplier
-let current = {x: 50, y: 40, s: 0.6};
-let lastTime = performance.now();
-let rafId = null;
+                particles = new THREE.Points(particleGeometry, particleMaterial);
+                scene.add(particles);
 
-// map pointer to portrait-local percentage
-function pointerToPct(clientX, clientY){
-  const rect = portrait.getBoundingClientRect();
-  const px = clientX - rect.left;
-  const py = clientY - rect.top;
-  const pctX = Math.max(0, Math.min(100, (px / rect.width) * 100));
-  const pctY = Math.max(0, Math.min(100, (py / rect.height) * 100));
-  // dynamic size: closer -> smaller highlight, further -> larger
-  const dx = Math.abs(pctX - 50) / 50; // 0..1
-  const dy = Math.abs(pctY - 50) / 50;
-  const dist = Math.sqrt(dx*dx + dy*dy); // 0..~1.414
-  const size = 0.5 + Math.max(0.0, 1 - dist) * 1.0; // 0.5..1.5
-  return {x: pctX, y: pctY * 0.95, s: size};
-}
+                document.getElementById('startButton').addEventListener('click', () => {
+                    Tone.start().then(playSoundscape);
+                    document.getElementById('ui-container').classList.add('hidden');
+                    document.body.style.cursor = 'none';
+                    animate();
+                });
 
-// pointer event updates target quickly (gesture input)
-portrait.addEventListener('pointermove', (e)=>{
-  target = pointerToPct(e.clientX, e.clientY);
-});
+                document.getElementById('main-canvas').addEventListener('click', (e) => {
+                    if (document.getElementById('ui-container').classList.contains('hidden') && !document.getElementById('final-message-container').classList.contains('visible')) {
+                        const vector = new THREE.Vector3();
+                        vector.set((e.clientX / window.innerWidth) * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1, 0.5);
+                        vector.unproject(camera);
+                        const dir = vector.sub(camera.position).normalize();
+                        const distance = -camera.position.z / dir.z;
+                        const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+                        
+                        saveMemory(pos.x, pos.y, pos.z);
+                        loadMemories(); // Refresh display
+                        playSoundscape();
+                    }
+                });
 
-// when pointer leaves portrait, relax highlight to center slowly
-portrait.addEventListener('pointerleave', ()=>{
-  target = {x:50, y:40, s:0.6};
-});
+                document.getElementById('main-canvas').addEventListener('dblclick', () => {
+                    document.getElementById('final-message-container').classList.add('visible');
+                    document.body.style.cursor = 'auto';
+                });
 
-// also update when pointer moves elsewhere to create slight "attraction"
-window.addEventListener('pointermove', (e)=>{
-  // if pointer is far from portrait, we still nudge target slightly toward center
-  const rect = portrait.getBoundingClientRect();
-  const cx = rect.left + rect.width/2;
-  const cy = rect.top + rect.height/2;
-  const d = Math.hypot(e.clientX - cx, e.clientY - cy);
-  const max = Math.hypot(window.innerWidth, window.innerHeight);
-  const influence = 1 - Math.min(1, d / (max * 0.6)); // 0..1
-  if(influence > 0.02 && (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom)){
-    // small bias toward pointer direction even if outside
-    const pct = pointerToPct(e.clientX, e.clientY);
-    target.x = 50 + (pct.x - 50) * Math.min(0.18, influence*0.18);
-    target.y = 40 + (pct.y - 40) * Math.min(0.18, influence*0.18);
-    target.s = 0.6 + (pct.s - 0.6) * Math.min(0.25, influence*0.25);
-  }
-});
+                window.addEventListener('resize', onWindowResize, false);
+            }
 
-// exponential smoothing + dynamic timestep integration for "non-human" feel
-function smoothStep(now){
-  const dt = Math.min(32, now - lastTime);
-  lastTime = now;
-  // smoothing factor depends on dt (frame-rate aware)
-  const tau = 120; // time constant in ms — smaller = snappier, larger = heavier trailing
-  const alpha = 1 - Math.exp(-dt / tau);
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
 
-  // use a non-linear easing: apply alpha to differences but warp a bit for elasticity
-  // compute difference
-  const dx = target.x - current.x;
-  const dy = target.y - current.y;
-  const ds = target.s - current.s;
+            function animate() {
+                if (document.getElementById('final-message-container').classList.contains('visible')) {
+                    return;
+                }
+                requestAnimationFrame(animate);
 
-  // apply eased increment
-  // nonlinear: scale alpha by a function of distance to make small nudges very smooth and larger jumps elastic
-  const scale = Math.tanh(Math.hypot(dx,dy)/40) * 1.1 + 0.05;
-  current.x += dx * alpha * scale;
-  current.y += dy * alpha * scale;
-  current.s += ds * alpha * (0.9 + Math.abs(ds)*0.6);
+                const positions = particles.geometry.attributes.position.array;
+                for (let i = 0; i < positions.length; i += 3) {
+                    positions[i] -= 0.5;
+                    if (positions[i] < -1000) positions[i] = 1000;
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
 
-  // write back to CSS variables (rounded for cleanliness)
-  portrait.style.setProperty('--hx', current.x.toFixed(2) + '%');
-  portrait.style.setProperty('--hy', current.y.toFixed(2) + '%');
-  portrait.style.setProperty('--hsz', (current.s).toFixed(3));
+                if (sphere) {
+                    sphere.rotation.y += 0.005;
+                    sphere.rotation.x += 0.002;
+                }
+                renderer.render(scene, camera);
+            }
 
-  rafId = requestAnimationFrame(smoothStep);
-}
-rafId = requestAnimationFrame((t)=>{ lastTime = t; smoothStep(t); });
-
-/* accessibility: close with escape */
-document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') document.getElementById('modal').classList.remove('open'); });
-
-/* recompute const points after image load */
-const dhanuImg = document.getElementById('dhanuImg');
-dhanuImg.addEventListener('load', ()=>{ computeConstPoints(); });
-
-/* initial alive feel */
-setTimeout(()=>spawnAt(W/2,H/2,26), 600);
-</script>
+            initFirebase().then(initThreeJs);
+        }
+    </script>
 </body>
 </html>
