@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Our Love Story</title>
+    <title>Our Locket</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,188 +11,203 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a;
-            color: white;
+            background: linear-gradient(135deg, #10052b, #2a0545, #10052b);
+            background-size: 400% 400%;
+            animation: background-animate 15s ease infinite;
+            color: #f3e8ff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
             position: relative;
-        }
-        .container {
-            position: relative;
-            z-index: 10;
-            text-align: center;
-            padding: 2rem;
-            animation: fadeIn 2s ease-out;
-        }
-        .photo-frame {
-            position: relative;
-            width: 80vw;
-            max-width: 400px;
-            height: auto;
-            border-radius: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 0 40px rgba(126, 34, 206, 0.6);
-            border: 4px solid #f3e8ff;
-            transform: scale(0.9);
-            transition: transform 0.5s ease;
             cursor: pointer;
         }
-        .photo-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: filter 0.5s ease;
-            filter: grayscale(100%);
+
+        @keyframes background-animate {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
-        .photo-frame:hover {
-            transform: scale(1);
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            width: 350px;
+            height: 350px;
         }
-        .photo-frame:hover img {
-            filter: grayscale(0%);
-        }
-        .message-box {
-            background-color: rgba(30, 20, 40, 0.7);
-            backdrop-filter: blur(8px);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-top: 2rem;
+
+        .locket-front, .locket-back {
+            position: absolute;
+            width: 175px;
+            height: 250px;
+            background: #2D2D44;
+            border: 2px solid #5A4E81;
+            border-radius: 1.5rem;
             box-shadow: 0 0 20px rgba(126, 34, 206, 0.4);
-            max-width: 600px;
+            transition: transform 1.5s ease-in-out;
+            transform-origin: left center;
+        }
+        .locket-front {
+            left: 50%;
+            z-index: 10;
+        }
+        .locket-back {
+            right: 50%;
+            transform: rotateY(0deg);
+        }
+
+        .locket-front-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 1.5rem;
             text-align: center;
-            opacity: 0;
-            transition: opacity 1s ease-in-out;
-            transform: translateY(20px);
-            visibility: hidden;
+            transition: opacity 0.5s ease;
         }
-        .message-box.visible {
-            opacity: 1;
-            transform: translateY(0);
-            visibility: visible;
-        }
-        .message-box h1 {
+
+        .locket-front-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 0 0 5px #fce7f3;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #fce7f3; }
+            to { text-shadow: 0 0 15px #fce7f3, 0 0 20px #f3e8ff; }
+        }
+
+        .container.open .locket-front {
+            transform: rotateY(-180deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .container.open .locket-back {
+            transform: rotateY(180deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .locket-inner {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 350px;
+            height: 250px;
+            transition: opacity 1.5s ease;
+            opacity: 0;
+            pointer-events: none;
+            flex-direction: row;
+        }
+
+        .container.open .locket-inner {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .locket-inner-side {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            box-sizing: border-box;
+            text-align: center;
+            transition: opacity 1s ease-in-out;
+        }
+        .locket-inner-side.poem {
+            animation: fadeInText 2s ease-in-out;
+        }
+        .locket-inner-side.photo {
+            animation: fadeInPhoto 2s ease-in-out;
+        }
+
+        @keyframes fadeInText {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInPhoto {
+            0% { opacity: 0; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .locket-inner-side h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
             margin-bottom: 1rem;
         }
-        .music-button {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #7e22ce;
-            border: none;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 9999px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .locket-inner-side p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            font-style: italic;
         }
-        .music-button:hover {
-            background-color: #9333ea;
-            transform: translateX(-50%) scale(1.05);
-        }
-        .music-button.playing {
-            background-color: #4CAF50;
-        }
-        .music-button.playing:hover {
-            background-color: #66BB6A;
-        }
-        .pulse-animation {
-            animation: pulse 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .locket-inner-side img {
+            width: 100%;
+            height: auto;
+            border-radius: 0.5rem;
+            box-shadow: 0 0 15px rgba(252, 231, 243, 0.5);
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="photo-frame" id="photo-frame">
-            <img src="us.png" alt="A photo of us" onerror="this.onerror=null;this.src='https://placehold.co/400x500/1a0a2a/f3e8ff?text=Us';" />
+    <div class="container" id="locket-container">
+        <div class="locket-front">
+            <div class="locket-front-text">
+                <h1>My love,</h1>
+                <p class="text-gray-300 mt-2">A gift for you. Click to open.</p>
+            </div>
         </div>
-        <div class="message-box" id="message-box">
-            <h1>My Everything,</h1>
-            <p class="text-gray-200 leading-relaxed">
-                I never believed in destiny until I met you. Every moment, every laugh, every quiet glance—they all feel like a song I've known forever. You're not just my favorite song, you are the music that my heart beats to. I love you, and I promise to be your forever.
-            </p>
+        <div class="locket-inner" id="locket-inner-content">
+            <div class="locket-inner-side poem">
+                <h2>Our Story</h2>
+                <p>
+                    I didn't know the world could be so bright<br>
+                    until I saw it mirrored in your eyes.<br>
+                    You are the warmth that chases away the night,<br>
+                    the truth behind my favorite melodies.<br>
+                    And in this quiet, perfect moment, know<br>
+                    that my world revolves around you, endlessly.
+                </p>
+            </div>
+            <div class="locket-inner-side photo">
+                <img src="us.png" alt="A photo of us together" onerror="this.onerror=null;this.src='https://placehold.co/175x250/2a0545/f3e8ff?text=Our+Photo';" />
+            </div>
         </div>
     </div>
     
-    <button class="music-button" id="music-button">
-        <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
-        </svg>
-        <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
-            <rect x="6" y="4" width="4" height="16"></rect>
-            <rect x="14" y="4" width="4" height="16"></rect>
-        </svg>
-        <span>Play Our Song</span>
-    </button>
-
     <audio id="audio" loop>
         <source src="song.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const audio = document.getElementById('audio');
-            const musicButton = document.getElementById('music-button');
-            const playIcon = document.getElementById('play-icon');
-            const pauseIcon = document.getElementById('pause-icon');
-            const messageBox = document.getElementById('message-box');
-            const photoFrame = document.getElementById('photo-frame');
-            const audioSpan = musicButton.querySelector('span');
+        const container = document.getElementById('locket-container');
+        const audio = document.getElementById('audio');
+        let isOpened = false;
 
-            // Handle music play/pause
-            musicButton.addEventListener('click', () => {
-                if (audio.paused) {
-                    audio.play().catch(error => console.error("Audio playback failed:", error));
-                    musicButton.classList.add('playing');
-                    playIcon.style.display = 'none';
-                    pauseIcon.style.display = 'block';
-                    audioSpan.textContent = 'Pause Our Song';
-                    musicButton.classList.add('pulse-animation');
-                } else {
-                    audio.pause();
-                    musicButton.classList.remove('playing');
-                    playIcon.style.display = 'block';
-                    pauseIcon.style.display = 'none';
-                    audioSpan.textContent = 'Play Our Song';
-                    musicButton.classList.remove('pulse-animation');
-                }
-            });
-
-            // Reveal message when photo is hovered/tapped
-            photoFrame.addEventListener('mouseenter', () => {
-                if (window.innerWidth > 768) { // Desktop
-                    messageBox.classList.add('visible');
-                }
-            });
-            photoFrame.addEventListener('mouseleave', () => {
-                if (window.innerWidth > 768) {
-                    messageBox.classList.remove('visible');
-                }
-            });
-            photoFrame.addEventListener('click', () => {
-                if (window.innerWidth <= 768) { // Mobile
-                    messageBox.classList.toggle('visible');
-                }
-            });
+        container.addEventListener('click', () => {
+            if (!isOpened) {
+                container.classList.add('open');
+                isOpened = true;
+                
+                // Try to play the audio
+                audio.play().catch(error => {
+                    console.error("Audio playback failed:", error);
+                });
+            }
         });
     </script>
+
 </body>
 </html>
